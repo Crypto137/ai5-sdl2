@@ -14,12 +14,16 @@
  * along with this program; if not, see <http://gnu.org/licenses/>.
  */
 
+#define SDL_SIM_CURSOR_COMPILE 1
+
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <math.h>
 #include <time.h>
 #include <SDL.h>
+#include "SDL_sim_cursor.h"
 
 #include "nulib.h"
 #include "nulib/file.h"
@@ -321,6 +325,7 @@ static void gfx_fini(void)
 		SDL_DestroyTexture(gfx.texture);
 		SDL_DestroyRenderer(gfx.renderer);
 		SDL_DestroyWindow(gfx.window);
+		SDL_SIM_MouseQuit();
 		SDL_Quit();
 	}
 	gfx_screen_dirty();
@@ -337,6 +342,7 @@ void gfx_init(const char *name)
 	gfx_view.w = game->surface_sizes[0].w;
 	gfx_view.h = game->surface_sizes[0].h;
 	SDL_CALL(SDL_Init, SDL_INIT_VIDEO | SDL_INIT_TIMER);
+	SDL_SIM_MouseInit();
 #ifndef USE_SDL_MIXER
 	SDL_CALL(SDL_InitSubSystem, SDL_INIT_AUDIO);
 #endif
@@ -346,6 +352,7 @@ void gfx_init(const char *name)
 	gfx.window_id = SDL_GetWindowID(gfx.window);
 	SDL_CTOR(SDL_CreateRenderer, gfx.renderer, gfx.window, -1, 0);
 	SDL_CALL(SDL_SetRenderDrawColor, gfx.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	SDL_SIM_Set_Renderer(gfx.renderer);
 	gfx_init_window();
 	atexit(gfx_fini);
 }
@@ -371,6 +378,7 @@ void gfx_update(void)
 	}
 	SDL_CALL(SDL_RenderClear, gfx.renderer);
 	SDL_CALL(SDL_RenderCopy, gfx.renderer, gfx.texture, NULL, NULL);
+	SDL_SIM_RenderCursorScaled(NULL, 1.0, gfx_view.w, gfx_view.h);
 	SDL_RenderPresent(gfx.renderer);
 	gfx_clean(gfx.screen);
 }

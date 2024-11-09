@@ -145,6 +145,12 @@ void handle_events(void)
 			else if (e.wheel.y < 0)
 				cursor_set_direction(CURSOR_DIR_DOWN);
 			break;
+
+		case SDL_MOUSEMOTION:
+			// Refresh screen on mouse movement for the software cursor
+			gfx_screen_dirty();
+			break;
+
 		default:
 			if (e.type == cursor_swap_event)
 				cursor_swap();
