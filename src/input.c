@@ -107,7 +107,8 @@ void handle_events(void)
 				gfx_screen_dirty();
 				break;
 			case SDL_WINDOWEVENT_CLOSE:
-				if (gfx_confirm_quit())
+				// Disabled confirmation for frontend compatibility
+				//if (gfx_confirm_quit())
 					sys_exit(0);
 				break;
 			}
